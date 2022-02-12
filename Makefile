@@ -1,130 +1,99 @@
-# all:
-# 	make -C object
-
-# pc:
-# 	make pc -C object
-
-# mp157:
-# 	make mp157 -C object
-
-# clean:
-# 	make clean -C object
-
 #
 # Makefile
 #
-#编译工具链
-# GCC = gcc
-# CC = arm-none-linux-gnueabihf-gcc
 
+#工程目录
+LVGL_DIR ?= .
+
+# 根据输入的编译目标选择相应的编译器，加入-include $(DEPENDS)的目的是为了能够自动识别出头文件的修改并进行跟随编译
 ifeq ($(MAKECMDGOALS),pc)
-
+#-------------------------------------------------------------------------- pc
 CC = gcc
+-include $(DEPENDS)
+# 编译参数：
 CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/
 
-else ifeq ($(MAKECMDGOALS),mp157)
+# 链接库的文件路径、头文件路径与要链接的库
+# LDFLAGS := -I /home/lgb/piLib/piInclude/WiringPi/wiringPi -L /home/lgb/piLib -lwiringPi -lSDL2 -lm
 
+else ifeq ($(MAKECMDGOALS),mp157)
+#-------------------------------------------------------------------------- mp157
 # define ON_Embedded
 CC = arm-none-linux-gnueabihf-gcc
+-include $(DEPENDS)
 CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ -D ON_Embedded
-# CFLAGS ?= -Wall -Wshadow -Wundef -g -I$(LVGL_DIR)/ -D ON_Embedded
 
-else 	# default
+else
+#--------------------------------------------------------------------------	default (mp157)
 CC = arm-none-linux-gnueabihf-gcc
+-include $(DEPENDS)
+
 CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ -D ON_Embedded
 
 endif
+#--------------------------------------------------------------------------END-----
 
 #目标文件名
 BIN = demo
-# 这里定义出所编译的目标架构及最终的可执行文件名
+
+# 定义编译的目标架构及最终的可执行文件名
 TARGET_ARCH		 = $(MAKECMDGOALS)
-TARGET_OBJT		:= demo_$(MAKECMDGOALS)
+TARGET_OBJT		:= $(BIN)_$(MAKECMDGOALS)
 
+# 设置编译过程中的临时文件保存路径
+BUILD_DIR		?= _build
+OBJ_DIR			?= $(BUILD_DIR)/$(TARGET_ARCH)
 
-# 这里设置好编译过程中的临时目录名称
-BUILDDIR		?= _build
-OBJCTDIR		?= $(BUILDDIR)/$(TARGET_ARCH)
+include $(LVGL_DIR)/source.mk
 
-LVGL_DIR_NAME = lvgl
-LV_DRIVERS_DIR_NAME ?= lv_drivers
+OBJECTS = $(AOBJS) $(COBJS) $(MAINOBJ)
+INCLUDES = $(ASRCS) $(CSRCS) $(SOURCES)
 
-#源文件路径
-LVGL_DIR ?= ${shell pwd}/
+# 根据.c文件编译出同名的.d和.o文件
+AOBJS			:= $(patsubst %.c, $(OBJ_DIR)/%.o, $(filter %.S, $(ASRCS)))
+COBJS			:= $(patsubst %.c, $(OBJ_DIR)/%.o, $(filter %.c, $(CSRCS)))
+MAINOBJ			:= $(patsubst %.c, $(OBJ_DIR)/%.o, $(filter %.c, $(SOURCES)))
+DEPENDS			:= $(patsubst %.c, $(OBJ_DIR)/%.d, $(filter %.c, $(INCLUDES)))
 
-#链接库的文件路径、头文件路径与要链接的库
-# PI_LIB_PATH := -I /home/lgb/piLib/piInclude/WiringPi/wiringPi -L /home/lgb/piLib -lwiringPi
-
-
-#LDFLAGS ?= -lSDL2 -lm
-
-
-#.o文件存放路径
-O_PATH = $(LVGL_DIR)/object
-
-include $(LVGL_DIR)/$(LVGL_DIR_NAME)/lvgl.mk
-include $(LVGL_DIR)/$(LV_DRIVERS_DIR_NAME)/lv_drivers.mk
-
-#Collect the files to compile
-# MAINSRC = ../main.c ../chinese.c ../fontadpt.c ../ui.c
-MAINSRC = ../main.c ../chinese.c ../fontadpt.c
-
-# CSRCS +=lvgl-new/demos/benchmark/lv_demo_benchmark.c
-
-AOBJS = $(ASRCS:.S=.o)
-COBJS = $(CSRCS:.c=.o)
-MAINOBJ = $(MAINSRC:.c=.o)
-
-# AOBJS := $(addprefix $(O_PATH)/,$(AOBJS))		# 连接路径;
-# COBJS := $(addprefix $(O_PATH)/,$(COBJS))
-# MAINOBJ := $(addprefix $(O_PATH)/,$(MAINOBJ))
-
-
-SRCS = $(ASRCS) $(CSRCS) $(MAINSRC)
-OBJS = $(AOBJS) $(COBJS) $(MAINOBJ)
-
-#将生成的.o文件放到O_PATH目录下
-%.o: %.c
-	@$(CC) -c $(CFLAGS) $(PI_LIB_PATH) $< -o $@
-	@echo "CC $<"
-
-
-# 这里定义出合法的编译对象
+# 定义合法的编译对象, PHONY 强制让makefile执行指令操作;
 .PHONY: pc mp157 useage help clean
 
+# 定义生成目标的名称;
 pc mp157 : mngdir $(TARGET_OBJT)
 
 mngdir:
 	@echo "-------------------------------------------------- Begin to bulid $(TARGET_OBJT)"
-	@mkdir -pv $(OBJCTDIR)
-	@mkdir -pv $(BUILDDIR)
-	
-## MAINOBJ -> OBJFILES
-all: default
+	@mkdir -pv $(OBJ_DIR)
+	@mkdir -pv $(BUILD_DIR)
 
-# 生成目标文件    
+#将生成的 .o .d 文件放到O_PATH目录下
+$(OBJ_DIR)/%.o: %.c
+	@mkdir -pv $(@D)
+	@$(CC) -c $(CFLAGS) $< -o $@ 
+	@echo "CC $<"
 
+$(OBJ_DIR)/%.d: %.c
+	@echo "$@: $<:$(notdir $*)"
+	@mkdir -pv $(@D)
+	@set -e; rm -f $@; \
+	$(CC) -MM $(CFLAGS) $< > $@.$$$$; \
+	sed 's,$(notdir $*)\.o[ :]*,$(OBJ_DIR)/$*\.o $@ : ,g' < $@.$$$$ > $@; \
+	rm -f $@.$$$$
+
+# 生成目标文件
 $(TARGET_OBJT): $(OBJECTS) $(DEPENDS)
-	$(CC) $(CFLAGS) -o $(BUILDDIR)/$@ $(OBJECTS) $(LDFLAGS)
+	@$(CC) $(CFLAGS) -o $(BUILD_DIR)/$@ $(OBJECTS) $(LDFLAGS)
 	@echo "-------------------------------------------------- Bulid $(TARGET_OBJT) complete!"
+	@cp $(BUILD_DIR)/$@ $(LVGL_DIR)/$(BIN)
 
+useage help:
+	@echo "\n           **** How to build? ****\n"
+	@echo "    make pc		-- build target for pc"
+	@echo "    make mp157		-- build target for mp157"
+	@echo "    make 		-- build target for default (mp157)"
 
-default: $(OBJS)
-	$(CC) -o $(BIN) $(OBJS) $(LDFLAGS) $(PI_LIB_PATH) 
-
-mp157: $(OBJS)
-	$(CC) -o $(BIN) $(OBJS) $(LDFLAGS) $(PI_LIB_PATH) 
-
-pc: $(OBJS)
-	$(CC) -o $(BIN) $(OBJS) $(LDFLAGS) $(PI_LIB_PATH)
-
-test: benchmark.o
-	$(CC) -o benchmark $(AOBJS) $(COBJS) $(LDFLAGS)
-
-clean: 
-	rm -f $(BIN) $(OBJS) 
-
-# #获取源文件路径下的所有.o文件名
-# GCC_SOURCE_PATH = $(foreach dir,$(SUBDIR),$(wildcard $(dir)/*.c))
-# GCC_OBJ_PATH = $(patsubst %.c,$(O_PATH)/%.o, $(notdir $(GCC_SOURCE_PATH)))
+clean:
+	@echo "-------------------------------------------------- Begin to clean bulid files"
+	@rm -rfv $(BUILD_DIR) $(LVGL_DIR)/$(BIN)
+	@echo "-------------------------------------------------- clean all files complete!"
 

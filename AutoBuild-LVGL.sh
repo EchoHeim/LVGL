@@ -6,6 +6,6 @@ server_username=lodge
 
 #make clean
 
-make
-scp ./object/$target_file $server_username@$server_IP:/home/$server_username/
+make mp157
+scp ./$target_file $server_username@$server_IP:/home/$server_username/
 

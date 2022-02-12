@@ -32,7 +32,7 @@ lv_indev_t *mouse_indev ;	//mouse or touchscreen
  *  STATIC PROTOTYPES
  **********************/
 static void hal_init(void);
-static int tick_thread(void * data);
+
 bool ui_keyboard_read(lv_indev_drv_t *indev, lv_indev_data_t*data);
 int fdKey;
 
@@ -64,9 +64,9 @@ int main(int argc, char ** argv)
     /*Load a demo*/
 //    ui_main();  our real prog
 
-    // lv_demo_music();
+    lv_demo_music();
     // lv_demo_stress();
-    lv_demo_widgets();
+    // lv_demo_widgets();
 
     /* A keyboard and encoder (mouse wheel) control example*/
 
