@@ -32,6 +32,7 @@ lv_indev_t *mouse_indev ;	//mouse or touchscreen
  *  STATIC PROTOTYPES
  **********************/
 static void hal_init(void);
+static int tick_thread(void *data);
 
 bool ui_keyboard_read(lv_indev_drv_t *indev, lv_indev_data_t*data);
 int fdKey;
@@ -91,7 +92,7 @@ static void hal_init(void)
 {
 ////////display driver
 	lv_disp_drv_t disp_drv;
-	lv_disp_drv_init(&disp_drv);
+	lv_disp_drv_init(&disp_drv); /*Basic initialization*/
 
 #ifdef	ON_Embedded
 	fbdev_init();		//framebuffer driver at real env
@@ -100,15 +101,27 @@ static void hal_init(void)
     disp_drv.ver_res = LV_VER_RES;
     disp_drv.flush_cb = fbdev_flush;
 
+    lv_disp_drv_register(&disp_drv);
 #else
 	//pc monitor
 	monitor_init();
-    disp_drv.buffer = &disp_buf;
+    SDL_CreateThread(tick_thread, "tick", NULL);
+    disp_drv.draw_buf = &disp_buf;
+    disp_drv.hor_res = MONITOR_HOR_RES;
+    disp_drv.ver_res = MONITOR_VER_RES;
     disp_drv.flush_cb = monitor_flush;    /*Used when `LV_VDB_SIZE != 0` in lv_conf.h (buffered drawing)*/
+    disp_drv.antialiasing = 1;
+
+    lv_disp_t * disp = lv_disp_drv_register(&disp_drv);
+
+    lv_theme_t * th = lv_theme_default_init(disp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), LV_THEME_DEFAULT_DARK, LV_FONT_DEFAULT);
+    lv_disp_set_theme(disp, th);
+
+    lv_group_t * g = lv_group_create();
+    lv_group_set_default(g);
+
 #endif
 
-    lv_disp_drv_register(&disp_drv);
-	
 /////////mouse/touchscreen driver//////////////
     lv_indev_drv_t indev_drv;
     lv_indev_drv_init(&indev_drv);
@@ -126,11 +139,34 @@ static void hal_init(void)
     mouse_indev = lv_indev_drv_register(&indev_drv);
 
 #ifndef ON_Embedded
+
+    keyboard_init();
+    static lv_indev_drv_t indev_drv_2;
+    lv_indev_drv_init(&indev_drv_2); /*Basic initialization*/
+    indev_drv_2.type = LV_INDEV_TYPE_KEYPAD;
+    indev_drv_2.read_cb = keyboard_read;
+    lv_indev_t *kb_indev = lv_indev_drv_register(&indev_drv_2);
+    lv_indev_set_group(kb_indev, g);
+    mousewheel_init();
+    static lv_indev_drv_t indev_drv_3;
+    lv_indev_drv_init(&indev_drv_3); /*Basic initialization*/
+    indev_drv_3.type = LV_INDEV_TYPE_ENCODER;
+    indev_drv_3.read_cb = mousewheel_read;
+
+    lv_indev_t * enc_indev = lv_indev_drv_register(&indev_drv_3);
+    lv_indev_set_group(enc_indev, g);
+
     /*Set a cursor for the mouse*/
-    LV_IMG_DECLARE(mouse_cursor_icon);                          /*Declare the image file.*/
-    lv_obj_t * cursor_obj =  lv_img_create(lv_scr_act(), NULL); /*Create an image object for the cursor */
-    lv_img_set_src(cursor_obj, &mouse_cursor_icon);             /*Set the image source*/
-    lv_indev_set_cursor(mouse_indev, cursor_obj);               /*Connect the image  object to the driver*/
+    LV_IMG_DECLARE(mouse_cursor_icon); /*Declare the image file.*/
+    lv_obj_t * cursor_obj = lv_img_create(lv_scr_act()); /*Create an image object for the cursor */
+    lv_img_set_src(cursor_obj, &mouse_cursor_icon);           /*Set the image source*/
+    lv_indev_set_cursor(mouse_indev, cursor_obj);             /*Connect the image  object to the driver*/
+
+    /*Set a cursor for the mouse*/
+    // LV_IMG_DECLARE(mouse_cursor_icon);                          /*Declare the image file.*/
+    // lv_obj_t * cursor_obj =  lv_img_create(lv_scr_act(), NULL); /*Create an image object for the cursor */
+    // lv_img_set_src(cursor_obj, &mouse_cursor_icon);             /*Set the image source*/
+    // lv_indev_set_cursor(mouse_indev, cursor_obj);               /*Connect the image  object to the driver*/
 #endif
 
 /////////////////keypad/////////////////////////
@@ -176,5 +212,19 @@ uint32_t custom_tick_get(void)
     return time_ms;
 }
 
+/**
+ * A task to measure the elapsed time for LVGL
+ * @param data unused
+ * @return never return
+ */
+static int tick_thread(void *data) {
+    (void)data;
 
+    while(1) {
+        SDL_Delay(5);
+        lv_tick_inc(5); /*Tell LittelvGL that 5 milliseconds were elapsed*/
+    }
+
+    return 0;
+}
 

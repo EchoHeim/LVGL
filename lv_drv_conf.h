@@ -118,7 +118,13 @@
 
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MONITOR
-#  define USE_MONITOR         0
+
+#ifndef ON_Embedded
+#   define USE_MONITOR          1
+#else
+#   define USE_MONITOR          0
+#endif
+
 #endif
 
 #if USE_MONITOR
@@ -397,7 +403,7 @@
  *-------------------------------------*/
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MOUSE
-#  define USE_MOUSE           0
+#  define USE_MOUSE           1
 #endif
 
 #if USE_MOUSE
@@ -409,7 +415,7 @@
  *------------------------------------------*/
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MOUSEWHEEL
-#  define USE_MOUSEWHEEL      0
+#  define USE_MOUSEWHEEL      1
 #endif
 
 #if USE_MOUSEWHEEL
@@ -481,7 +487,7 @@
  *------------------------------*/
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_KEYBOARD
-#  define USE_KEYBOARD        0
+#  define USE_KEYBOARD        1
 #endif
 
 #if USE_KEYBOARD

@@ -22,6 +22,8 @@
 #include <SDL2/SDL.h>
 #include "lv_drivers/display/monitor.h"
 #include "lv_drivers/indev/mouse.h"
+#include "lv_drivers/indev/keyboard.h"
+#include "lv_drivers/indev/mousewheel.h"
 
 #endif
 

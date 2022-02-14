@@ -21,14 +21,17 @@ TARGET_OBJT		:= $(BIN)_$(MAKECMDGOALS)
 endif
 
 ifneq ($(findstring $(MAKECMDGOALS)$(DEFAULT_ARCH),pc pc),)
-#-------------------------------------------------------------------------- pc
+#-------------------------------------------------------------------------- ARCH-pc
 CC = gcc
 -include $(DEPENDS)
 # 编译参数：
 CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/
 
+# 链接库的文件路径、头文件路径与要链接的库
+LDFLAGS := -lSDL2 -lm
+
 else ifneq ($(findstring $(MAKECMDGOALS)$(DEFAULT_ARCH),mp157 mp157),)
-#-------------------------------------------------------------------------- mp157
+#-------------------------------------------------------------------------- ARCH-mp157
 # define ON_Embedded
 CC = arm-none-linux-gnueabihf-gcc
 -include $(DEPENDS)
@@ -44,6 +47,7 @@ endif
 BUILD_DIR		?= _build
 OBJ_DIR			?= $(BUILD_DIR)/$(TARGET_ARCH)
 
+#Collect the files to compile
 include $(LVGL_DIR)/source.mk
 
 OBJECTS = $(AOBJS) $(COBJS) $(MAINOBJ)
