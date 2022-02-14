@@ -24,7 +24,7 @@ pc端模拟:
     
     git submodule add <url> <path>
 
-本次移植的是 lvgl8.2,在git主目录下输入以下命令,添加 lvgl、lv_drivers 作为子模块;
+本次移植的是 lvgl8.2，在git主目录下输入以下命令，添加 lvgl、lv_drivers 作为子模块;
 
     git submodule add -b release/v8.2 https://github.com/lvgl/lvgl.git lvgl
     git submodule add -b release/v8.2 https://github.com/lvgl/lv_drivers.git lv_drivers

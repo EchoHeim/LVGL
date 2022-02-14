@@ -24,8 +24,11 @@ ifneq ($(findstring $(MAKECMDGOALS)$(DEFAULT_ARCH),pc pc),)
 #-------------------------------------------------------------------------- ARCH-pc
 CC = gcc
 -include $(DEPENDS)
-# 编译参数：
-CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/
+
+# 宏定义
+DEFINES ?= -D PC_MONITOR
+# 编译参数:
+CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ $(DEFINES)
 
 # 链接库的文件路径、头文件路径与要链接的库
 LDFLAGS := -lSDL2 -lm
@@ -35,7 +38,9 @@ else ifneq ($(findstring $(MAKECMDGOALS)$(DEFAULT_ARCH),mp157 mp157),)
 # define ON_Embedded
 CC = arm-none-linux-gnueabihf-gcc
 -include $(DEPENDS)
-CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ -D ON_Embedded
+
+DEFINES ?= -D ON_Embedded
+CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ $(DEFINES)
 
 # 链接库的文件路径、头文件路径与要链接的库
 # LDFLAGS := -I /home/lgb/piLib/piInclude/WiringPi/wiringPi -L /home/lgb/piLib -lwiringPi -lSDL2 -lm

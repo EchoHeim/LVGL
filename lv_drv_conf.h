@@ -86,7 +86,14 @@
 
 /* SDL based drivers for display, mouse, mousewheel and keyboard*/
 #ifndef USE_SDL
-# define USE_SDL 0
+#ifdef ON_Embedded
+#   define USE_SDL          0
+#endif
+
+#ifdef PC_MONITOR
+#   define USE_SDL          1
+#endif
+
 #endif
 
 /* Hardware accelerated SDL driver */
@@ -95,8 +102,8 @@
 #endif
 
 #if USE_SDL || USE_SDL_GPU
-#  define SDL_HOR_RES     1024
-#  define SDL_VER_RES     600
+#  define SDL_HOR_RES     LV_HOR_RES
+#  define SDL_VER_RES     LV_VER_RES
 
 /* Scale window by this factor (useful when simulating small screens) */
 #  define SDL_ZOOM        1
@@ -118,18 +125,12 @@
 
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MONITOR
-
-#ifndef ON_Embedded
-#   define USE_MONITOR          1
-#else
 #   define USE_MONITOR          0
 #endif
 
-#endif
-
 #if USE_MONITOR
-#  define MONITOR_HOR_RES     800
-#  define MONITOR_VER_RES     480
+#  define MONITOR_HOR_RES     LV_HOR_RES
+#  define MONITOR_VER_RES     LV_VER_RES
 
 /* Scale window by this factor (useful when simulating small screens) */
 #  define MONITOR_ZOOM        1
@@ -403,7 +404,7 @@
  *-------------------------------------*/
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MOUSE
-#  define USE_MOUSE           1
+#  define USE_MOUSE           0
 #endif
 
 #if USE_MOUSE
@@ -415,7 +416,7 @@
  *------------------------------------------*/
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_MOUSEWHEEL
-#  define USE_MOUSEWHEEL      1
+#  define USE_MOUSEWHEEL      0
 #endif
 
 #if USE_MOUSEWHEEL
@@ -487,7 +488,7 @@
  *------------------------------*/
 /*DEPRECATED: Use the SDL driver instead. */
 #ifndef USE_KEYBOARD
-#  define USE_KEYBOARD        1
+#  define USE_KEYBOARD        0
 #endif
 
 #if USE_KEYBOARD

@@ -11,31 +11,22 @@
 #include "lvgl/lvgl.h"
 #include "lv_conf.h"
 
-#ifdef ON_Embedded	  //  on embed if defined
-
+#ifdef ON_Embedded
 #include "lv_drivers/indev/evdev.h"
 #include "lv_drivers/display/fbdev.h"
+#endif     
 
-#else     //on pc simulator 
-
-#define SDL_MAIN_HANDLED        /*To fix SDL's "undefined reference to WinMain" issue*/
+#ifdef PC_MONITOR             // on pc simulator 
 #include <SDL2/SDL.h>
 #include "lv_drivers/display/monitor.h"
-#include "lv_drivers/indev/mouse.h"
-#include "lv_drivers/indev/keyboard.h"
-#include "lv_drivers/indev/mousewheel.h"
+#include "lv_drivers/sdl/sdl.h"
 
+#define SDL_MAIN_HANDLED        /*To fix SDL's "undefined reference to WinMain" issue*/
 #endif
-
-// global var
-extern lv_indev_t * key_indev;		//keyboard or keypad 
-extern lv_indev_t * mouse_indev ;	//mouse or touchscreen
-extern lv_font_t myfont;
 
 // global func
 void init_cn_font();
 void ui_main();
-bool embpad_read(lv_indev_drv_t* pdev, lv_indev_data_t*data);
 
 uint32_t kbdus[128] =
 {

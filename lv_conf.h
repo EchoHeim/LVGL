@@ -84,10 +84,12 @@
  *It removes the need to manually update the tick with `lv_tick_inc()`)*/
 uint32_t custom_tick_get(void);
 
-#ifndef ON_Embedded
-#define LV_TICK_CUSTOM 0
-#else
-#define LV_TICK_CUSTOM 1
+#ifdef ON_Embedded
+#   define LV_TICK_CUSTOM       1
+#endif
+
+#ifdef PC_MONITOR
+#   define LV_TICK_CUSTOM       0
 #endif
 
 #if LV_TICK_CUSTOM

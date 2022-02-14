@@ -17,8 +17,8 @@ INCLUDES	+= -Iinc/h
 CSRCS		+= ./lv_drivers/sdl/sdl.c
 
 SOURCES 	+= ./main.c
-SOURCES		+= ./resource/chinese.c
-SOURCES		+= ./resource/fontadpt.c
+# SOURCES		+= ./resource/chinese.c
+# SOURCES		+= ./resource/fontadpt.c
 SOURCES		+= ./resource/mouse_cursor_icon.c
 
 
