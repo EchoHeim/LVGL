@@ -46,7 +46,7 @@ CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ $(DEFINES)
 # LDFLAGS := -I /home/lgb/piLib/piInclude/WiringPi/wiringPi -L /home/lgb/piLib -lwiringPi -lSDL2 -lm
 
 endif
-#--------------------------------------------------------------------------END-----
+#--------------------------------------------------------------------------END-------------
 
 # 设置编译过程中的临时文件保存路径
 BUILD_DIR		?= _build

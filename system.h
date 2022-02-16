@@ -24,10 +24,24 @@
 #define SDL_MAIN_HANDLED        /*To fix SDL's "undefined reference to WinMain" issue*/
 #endif
 
+#include "klipper/klipper.h"
+
 // global func
 void init_cn_font();
 void ui_main();
+bool ui_keyboard_read(lv_indev_drv_t *indev, lv_indev_data_t*data);
 
+/**********************
+ *  STATIC PROTOTYPES
+ **********************/
+static void hal_init(void);
+
+#ifdef PC_MONITOR
+static int tick_thread(void *data);
+#endif
+
+
+/**-------------------------------------------------------------------------**/
 uint32_t kbdus[128] =
 {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8',	/* 9 */
@@ -75,6 +89,5 @@ uint32_t kbdus[128] =
     0,
     18	/*down*/
 };
-
 
 #endif   //__SYSTEM_H__

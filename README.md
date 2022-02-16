@@ -6,14 +6,20 @@
 
 汉化版：<http://lvgl.100ask.org/master/>
 
+***
 
 ## 编译架构选择
-可以在项目主目录下通过 make help 查看
+
+可以在项目主目录下通过 make help 命令查看
 
 ![示例 make help](https://user-images.githubusercontent.com/26021085/153798850-55c0018a-930e-4394-922b-49525dc55eda.png)
 
 
-pc端模拟:
+pc端模拟运行需要安装sdl库
+
+    sudo apt-get update && sudo apt-get install -y build-essential libsdl2-dev
+
+参考：
 
 <https://github.com/lvgl/lv_sim_vscode_sdl>
 
@@ -35,7 +41,7 @@ pc端模拟:
 
     git submodule update --init --recursive
 
-或者使用 recursive 参数循环克隆git子项目 
+或者使用 recursive 参数在克隆项目的时候循环克隆git子项目 
 
     git clone --recursive <git_url>
 
@@ -55,4 +61,10 @@ pc端模拟:
 逻辑或、逻辑与的变通实现
 
 <https://blog.csdn.net/u010312436/article/details/52459609/>
+
+***
+
+## klipperscreen 界面移植
+
+
 

@@ -12,31 +12,19 @@
 /*********************
  *      DEFINES
  *********************/
-/*display buffer*/
-
-#define DISP_BUF_SIZE (128 * LV_HOR_RES)
-
-static lv_disp_draw_buf_t disp_buf;
-
-static lv_color_t disp_buf_1[DISP_BUF_SIZE];	    //double buffer
-static lv_color_t disp_buf_2[DISP_BUF_SIZE];
+#define DISP_BUF_SIZE (128 * LV_HOR_RES)        /*display buffer*/
 
 /**********************
  *      TYPEDEFS
  **********************/
 
 /**********************
- *  STATIC PROTOTYPES
- **********************/
-static void hal_init(void);
-static int tick_thread(void *data);
-
-bool ui_keyboard_read(lv_indev_drv_t *indev, lv_indev_data_t*data);
-int fdKey;
-
-/**********************
  *  STATIC VARIABLES
  **********************/
+static lv_disp_draw_buf_t disp_buf;
+
+static lv_color_t disp_buf_1[DISP_BUF_SIZE];    //double buffer
+static lv_color_t disp_buf_2[DISP_BUF_SIZE];
 
 /**********************
  *      MACROS
@@ -48,14 +36,12 @@ int fdKey;
 
 int main(int argc, char ** argv)
 {
-    /*Initialize LittlevGL*/
     printf("Welcome to LVGL!\n"); 
-    lv_init();
+    lv_init();      /*Initialize LittlevGL*/
 
 	lv_disp_draw_buf_init(&disp_buf, disp_buf_1, disp_buf_2, DISP_BUF_SIZE);
 	
-    /*Initialize the HAL (display, input devices, tick) for LittlevGL*/
-    hal_init();
+    hal_init();     /*Initialize the HAL (display, input devices, tick) for LittlevGL*/
 
 	// init_cn_font();
 
@@ -64,17 +50,14 @@ int main(int argc, char ** argv)
     // lv_demo_music();
     // lv_demo_widgets();
     // lv_demo_benchmark();
-    lv_demo_keypad_encoder();
-
-    /* A keyboard and encoder (mouse wheel) control example*/
+    // klipper_main_func();
+    lv_example_obj_2();
 
 	while(1) {
-        /* Periodically call the lv_task handler.
-         * It could be done in a timer interrupt or an OS task too.*/
+        /* Periodically call the lv_task handler. It could be done in a timer interrupt or an OS task too.*/
         lv_task_handler();
         usleep(5 * 1000);       /*Just to let the system breath*/
     }
-
     return 0;
 }
 
@@ -163,7 +146,7 @@ static void hal_init(void)
 //--------------- keyboard for Embedded  driver ---------------//
 #ifdef ON_Embedded
 #if 0
-	fdKey = open ("/dev/input/event1", O_RDONLY);
+    int fdKey = open ("/dev/input/event1", O_RDONLY);
 	if (fdKey == -1) {
 		printf("can not open /dev/input/event1\n");
 		exit(1);
@@ -203,7 +186,6 @@ uint32_t custom_tick_get(void)
     uint32_t time_ms = now_ms - start_ms;
     return time_ms;
 }
-
 #endif
 
 #ifdef PC_MONITOR
