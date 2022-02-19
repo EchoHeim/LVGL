@@ -51,7 +51,7 @@ int main(int argc, char ** argv)
     // lv_demo_widgets();
     // lv_demo_benchmark();
     // klipper_main_func();
-    lv_example_obj_2();
+    example_obj_2();
 
 	while(1) {
         /* Periodically call the lv_task handler. It could be done in a timer interrupt or an OS task too.*/

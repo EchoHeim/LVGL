@@ -7,4 +7,6 @@
 
 void klipper_main_func(void);
 
+void example_obj_2(void);
+
 #endif
