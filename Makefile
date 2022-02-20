@@ -10,8 +10,8 @@ BIN = demo
 
 # 根据输入的编译目标选择相应的编译器，加入-include $(DEPENDS)的目的是为了能够自动识别出头文件的修改并进行跟随编译
 ifeq ($(MAKECMDGOALS),)
-# 如果make没有指定平台架构，默认是mp157
-DEFAULT_ARCH=mp157
+# 如果make没有指定平台架构，默认是 arm 嵌入式平台
+DEFAULT_ARCH=arm
 # 定义编译的目标架构及最终的可执行文件名
 TARGET_ARCH		 = $(DEFAULT_ARCH)
 TARGET_OBJT		:= $(BIN)_$(DEFAULT_ARCH)
@@ -33,10 +33,12 @@ CFLAGS ?= -Wall -Wshadow -Wundef -O3 -g0 -I$(LVGL_DIR)/ $(DEFINES)
 # 链接库的文件路径、头文件路径与要链接的库
 LDFLAGS := -lSDL2 -lm
 
-else ifneq ($(findstring $(MAKECMDGOALS)$(DEFAULT_ARCH),mp157 mp157),)
-#-------------------------------------------------------------------------- ARCH-mp157
+else ifneq ($(findstring $(MAKECMDGOALS)$(DEFAULT_ARCH),arm arm),)
+#-------------------------------------------------------------------------- ARCH-arm
 # define ON_Embedded
 CC = arm-none-linux-gnueabihf-gcc
+# CC = arm-none-eabi-gcc
+
 -include $(DEPENDS)
 
 DEFINES ?= -D ON_Embedded
@@ -65,10 +67,10 @@ MAINOBJ			:= $(patsubst %.c, $(OBJ_DIR)/%.o, $(filter %.c, $(SOURCES)))
 DEPENDS			:= $(patsubst %.c, $(OBJ_DIR)/%.d, $(filter %.c, $(INCLUDES)))
 
 # 定义合法的编译对象, PHONY 强制让makefile执行指令操作;
-.PHONY: pc mp157 useage help clean
+.PHONY: pc arm useage help clean
 
 # 定义生成目标的名称;
-pc mp157 : mngdir $(TARGET_OBJT)
+pc arm : mngdir $(TARGET_OBJT)
 
 mngdir:
 	@echo "\n-------------------------- Begin to bulid $(TARGET_OBJT) --------------------------\n"
@@ -98,8 +100,8 @@ $(TARGET_OBJT): $(OBJECTS) $(DEPENDS)
 useage help:
 	@echo "\n           **** How to build? ****\n"
 	@echo "    make pc		-- build target for pc"
-	@echo "    make mp157		-- build target for mp157"
-	@echo "    make 		-- build target for default (mp157)"
+	@echo "    make arm		-- build target for arm"
+	@echo "    make 		-- build target for default (arm)"
 
 clean:
 	@echo "\n-------------------------- Begin to clean bulid files --------------------------\n"
