@@ -98,10 +98,16 @@ $(TARGET_OBJT): $(OBJECTS) $(DEPENDS)
 	@cp $(BUILD_DIR)/$@ $(LVGL_DIR)/$(BIN)
 
 useage help:
-	@echo "\n           **** How to build? ****\n"
-	@echo "    make pc		-- build target for pc"
-	@echo "    make arm		-- build target for arm"
-	@echo "    make 		-- build target for default (arm)"
+	@echo "\n/--------------------------------------------------------\\"
+	@echo "|               **** How to build? ****                  |"           
+	@echo "|--------------------------------------------------------|"
+	@echo "|    make pc      -- build target for pc                 |"
+	@echo "|    make arm     -- build target for arm                |"
+	@echo "|    make         -- build target for default (arm)      |"
+	@echo "|--------------------------------------------------------|"
+	@echo "|    make clean   -- clean the project                   |"
+	@echo "|    make help    -- View help information               |"
+	@echo "\--------------------------------------------------------/\n"
 
 clean:
 	@echo "\n-------------------------- Begin to clean bulid files --------------------------\n"

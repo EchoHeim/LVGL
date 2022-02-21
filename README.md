@@ -12,7 +12,7 @@
 
 可以在项目主目录下通过 make help 命令查看
 
-![示例 make help](https://user-images.githubusercontent.com/26021085/153798850-55c0018a-930e-4394-922b-49525dc55eda.png)
+![示例 make help](https://user-images.githubusercontent.com/26021085/154875133-7a493a11-b212-4eae-bc08-1b8075ac9ebd.png)
 
 
 pc端模拟运行需要安装sdl库
