@@ -13,8 +13,11 @@
 
 #include <stdint.h>
 
-#define LV_HOR_RES (1024)
-#define LV_VER_RES (600)
+#define LV_HOR_RES (800)
+#define LV_VER_RES (480)
+
+#define TOUCH_DEVICE "/dev/input/event0"
+
 
 /*====================
    COLOR SETTINGS

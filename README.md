@@ -45,6 +45,11 @@ pc端模拟运行需要安装sdl库
 
     git clone --recursive <git_url>
 
+本仓库可使用 
+
+    git clone --recursive git@github.com:hsl416604093/LVGL.git
+
+
 
 参考:
 
