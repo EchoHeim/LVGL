@@ -17,7 +17,7 @@
 
 pc端模拟运行需要安装sdl库
 
-    sudo apt-get update && sudo apt-get install -y build-essential libsdl2-dev
+    sudo apt update && sudo apt install -y build-essential libsdl2-dev
 
 参考：
 
@@ -47,8 +47,7 @@ pc端模拟运行需要安装sdl库
 
 本仓库可使用 
 
-    git clone --recursive git@github.com:hsl416604093/LVGL.git
-
+    git clone --recursive git@github.com:EchoHeim/LVGL.git
 
 
 参考:
@@ -70,6 +69,4 @@ pc端模拟运行需要安装sdl库
 ***
 
 ## klipperscreen 界面移植
-
-
 
